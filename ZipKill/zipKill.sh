@@ -21,8 +21,7 @@ fi
 # Function to test passwords
 test_password() {
     PASSWORD=$1
-    unzip -P "$PASSWORD" -t "$ZIPFILE" > /dev/null 2>&1
-    if [ $? -eq 0 ]; then
+    if unzip -P "$PASSWORD" -t "$ZIPFILE" > /dev/null 2>&1; then
         echo "[+] Success! Password found: $PASSWORD"
         exit 0
     fi
