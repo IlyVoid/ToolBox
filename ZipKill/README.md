@@ -61,14 +61,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Disclaimer
 
 **zipKill** is intended for educational and ethical purposes only. Use it responsibly and ensure you have permission to test the ZIP files you are working with. Unauthorized access to data is illegal and unethical.
-
-## Contributing
-
-Contributions are welcome! Please submit a pull request or open an issue to discuss improvements or feature requests.
-
-```
-
-### Notes:
-- **Repository URL**: Make sure to replace `https://github.com/IlyVoid/zipKill.git` with the actual URL of your GitHub repository.
-- **License**: If you plan to include a license file, ensure you provide details on how to obtain it.
-- **Customization**: Feel free to add any additional sections that might be relevant, such as FAQs or troubleshooting tips, depending on your audience and how complex the tool becomes. 
