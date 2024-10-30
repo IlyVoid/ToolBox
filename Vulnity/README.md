@@ -32,24 +32,24 @@ You can install the required libraries using pip:
 
 ```bash
 pip install requests rich
-
+```
 Installation
 
 To get started with Vulnity, clone the repository to your local machine:
 
-bash
+```bash
 
 git clone https://github.com/IlyVoid/ToolBox.git
 cd ToolBox/Vulnity
-
+```
 Usage
 
 To run Vulnity, navigate to the directory containing the main.py file and execute it:
 
-bash
+```bash
 
 python main.py
-
+```
 You will be prompted to enter the target URL and select the tests you want to run. You can select multiple tests by entering their corresponding numbers, separated by commas.
 Available Tests
 
