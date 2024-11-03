@@ -1,7 +1,20 @@
-Vulnerability Assessment Report for https://pwn.college/
+Vulnerability Assessment Report for https://account.acronis.com/#/products/
 ================================================================================
-Report Generated on: 2024-10-30 13:10:27
+Report Generated on: 2024-10-30 16:54:08
 ================================================================================
+Detected Endpoints:
+--------------------------------------------------------------------------------
+  - https://account.acronis.com/#/products//api/v1/resource - Status Code: 200
+  - https://account.acronis.com/#/products//login - Status Code: 200
+  - https://account.acronis.com/#/products//register - Status Code: 200
+  - https://account.acronis.com/#/products//search - Status Code: 200
+  - https://account.acronis.com/#/products//admin - Status Code: 200
+  - https://account.acronis.com/#/products//dashboard - Status Code: 200
+  - https://account.acronis.com/#/products//help - Status Code: 200
+  - https://account.acronis.com/#/products//status - Status Code: 200
+  - https://account.acronis.com/#/products//users - Status Code: 200
+  - https://account.acronis.com/#/products//products - Status Code: 200
+--------------------------------------------------------------------------------
 
 Test: SQL Injection
 --------------------------------------------------------------------------------
@@ -13,9 +26,7 @@ Test: XSS
 
 Test: Directory Traversal
 --------------------------------------------------------------------------------
-  - Payload: ../../../windows/system32/cmd.exe
-    Status: Vulnerable
-    Reason: Sensitive system content exposed in response.
+  - No vulnerabilities found.
 
 Test: IDOR
 --------------------------------------------------------------------------------
@@ -32,15 +43,7 @@ Test: CSRF
 
 Test: Command Injection
 --------------------------------------------------------------------------------
-  - Payload: ; ls
-    Status: Vulnerable
-    Reason: Command execution detected in response.
-  - Payload: && cat /etc/passwd
-    Status: Vulnerable
-    Reason: Command execution detected in response.
-  - Payload: | whoami
-    Status: Vulnerable
-    Reason: Command execution detected in response.
+  - No vulnerabilities found.
 
 Test: HTTP Header Injection
 --------------------------------------------------------------------------------

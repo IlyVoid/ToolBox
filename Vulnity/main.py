@@ -1,10 +1,15 @@
-# main.py
-
 import os
+import time
+import requests  # Make sure to import requests
+import pyfiglet
+import concurrent.futures
+from colorama import Fore
 from rich.panel import Panel
 from rich.prompt import Prompt
 from rich.progress import Progress, SpinnerColumn, TextColumn
-from rich.table import Table  # Import Table from rich
+from rich.table import Table
+from rich.console import Console
+from rich.text import Text
 from styles.console_utils import console, display_results
 from styles.report_utils import generate_report
 
@@ -17,6 +22,14 @@ from tests.test_csrf import test_csrf
 from tests.test_commandInjection import test_command_injection
 from tests.test_httpHeader import test_http_header_injection
 
+# Import Utils
+from utils.logging_utils import setup_logging
+from utils.cache_utils import save_cache, load_cache
+from utils.input_validation import validate_url
+from utils.config_utils import load_endpoints
+
+logger = setup_logging()
+
 # Function to map test numbers to functions and names
 TESTS = {
     "1": ("SQL Injection", test_sql_injection),
@@ -28,20 +41,65 @@ TESTS = {
     "7": ("HTTP Header Injection", test_http_header_injection),
 }
 
+def detect_endpoints(base_url, endpoints):
+    detected_endpoints = {}
+
+    def request_endpoint(endpoint):
+        url = f"{base_url}{endpoint}"
+        try:
+            response = requests.get(url)
+            if response.status_code in [200, 301, 302, 404]:
+                logger.info(f"Endpoint {url} returned status {response.status_code}")
+                return url, response.status_code
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error checking {url}: {e}")
+            return None
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        results = executor.map(request_endpoint, endpoints)
+        
+    detected_endpoints.update({url: status for url, status in results if url is not None})
+    
+    return detected_endpoints
+
 def run_test(test_func, url):
     """Run a given test function on the specified URL."""
     return test_func(url)
+
+def clear_terminal():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def display_startup_message():
+    console.print(Panel("Starting Vulnity... Please wait.", style="bold yellow"))
+    time.sleep(1)  # Simulating startup delay 
 
 def show_menu():
     # Create reports directory if it doesn't exist
     if not os.path.exists("reports"):
         os.makedirs("reports")
-    
+
+    clear_terminal()
+    display_startup_message()
+
     while True:
         console.print(Panel("Vulnity powered on...", style="bold green"))
         url = Prompt.ask("[bold blue]Enter the target URL")
 
-        # Create and display the tests table
+        # Validate URL
+        if not validate_url(url):
+            console.print("[bold red]Invalid URL. Please try again.")
+            continue
+
+        # Check cache for previous results
+        cached_results = load_cache(url)
+        if cached_results:
+            console.print("[bold green]Cached results found. Loading from cache.")
+            display_results(cached_results["results"])
+            use_cache = Prompt.ask("[bold blue]Use cached results? (y/n)").lower() == 'y'
+            if use_cache:
+                continue
+
+        # Display the tests table
         table = Table(title="Available Tests")
         table.add_column("No.", style="cyan", justify="center")
         table.add_column("Test Name", style="magenta")
@@ -55,9 +113,14 @@ def show_menu():
         selected_tests = Prompt.ask("[bold yellow]Select tests to run (comma-separated numbers)").split(',')
         selected_tests = [test.strip() for test in selected_tests if test.strip() in TESTS]
 
+        # Load endpoints from configuration
+        common_endpoints = load_endpoints()
+        detected_endpoints = detect_endpoints(url, common_endpoints)
+
         console.print(Panel(f"Scanning {url}...", style="bold cyan"))
         results = {}
 
+        # Run selected tests with progress
         with Progress(SpinnerColumn(), TextColumn("{task.description}"), console=console) as progress:
             for test_num in selected_tests:
                 test_name, test_func = TESTS[test_num]
@@ -66,14 +129,18 @@ def show_menu():
 
         display_results(results)
 
-        # Generate and save the report
-        report_content = generate_report(url, results)
+        # Generate and save the report, including detected endpoints
+        report_content = generate_report(url, results, detected_endpoints)
         report_filename = f"reports/{url.replace('http://', '').replace('https://', '').replace('/', '_')}_report.txt"
         with open(report_filename, "w") as report_file:
             report_file.write(report_content)
 
         console.print(f"\n[bold green]Report saved to 'reports' folder.\n")
         
+        # Cache the results
+        save_cache(url, results)
+
+        # Ask if user wants another scan
         another_scan = Prompt.ask("[bold blue]Run another scan? (y/n)")
         if another_scan.lower() != 'y':
             break

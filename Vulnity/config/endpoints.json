@@ -1,0 +1,14 @@
+{
+    "endpoints": [
+        "/api/v1/resource",
+        "/login",
+        "/register",
+        "/search",
+        "/admin",
+        "/dashboard",
+        "/help",
+        "/status",
+        "/users",
+        "/products"
+    ]
+}
