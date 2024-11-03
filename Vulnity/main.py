@@ -83,66 +83,96 @@ def show_menu():
 
     while True:
         console.print(Panel("Vulnity powered on...", style="bold green"))
-        url = Prompt.ask("[bold blue]Enter the target URL")
+        
+        # User selects whether to test or view reports
+        action = Prompt.ask("[bold blue]Choose an action:\n1. Run Tests\n2. View Reports\n\nSelect (1 or 2)")
 
-        # Validate URL
-        if not validate_url(url):
-            console.print("[bold red]Invalid URL. Please try again.")
-            continue
+        if action == "1":
+            url = Prompt.ask("[bold blue]Enter the target URL")
 
-        # Check cache for previous results
-        cached_results = load_cache(url)
-        if cached_results:
-            console.print("[bold green]Cached results found. Loading from cache.")
-            display_results(cached_results["results"])
-            use_cache = Prompt.ask("[bold blue]Use cached results? (y/n)").lower() == 'y'
-            if use_cache:
+            # Validate URL
+            if not validate_url(url):
+                console.print("[bold red]Invalid URL. Please try again.")
                 continue
 
-        # Display the tests table
-        table = Table(title="Available Tests")
-        table.add_column("No.", style="cyan", justify="center")
-        table.add_column("Test Name", style="magenta")
+            # Check cache for previous results
+            cached_results = load_cache(url)
+            if cached_results:
+                console.print("[bold green]Cached results found. Loading from cache.")
+                display_results(cached_results["results"])
+                use_cache = Prompt.ask("[bold blue]Use cached results? (y/n)").lower() == 'y'
+                if use_cache:
+                    continue
 
-        for num, (name, _) in TESTS.items():
-            table.add_row(num, name)
+            # Display the tests table
+            table = Table(title="Available Tests")
+            table.add_column("No.", style="cyan", justify="center")
+            table.add_column("Test Name", style="magenta")
 
-        console.print(table)
+            for num, (name, _) in TESTS.items():
+                table.add_row(num, name)
 
-        # Get selected tests by number
-        selected_tests = Prompt.ask("[bold yellow]Select tests to run (comma-separated numbers)").split(',')
-        selected_tests = [test.strip() for test in selected_tests if test.strip() in TESTS]
+            console.print(table)
 
-        # Load endpoints from configuration
-        common_endpoints = load_endpoints()
-        detected_endpoints = detect_endpoints(url, common_endpoints)
+            # Get selected tests by number
+            selected_tests = Prompt.ask("[bold yellow]Select tests to run (comma-separated numbers)").split(',')
+            selected_tests = [test.strip() for test in selected_tests if test.strip() in TESTS]
 
-        console.print(Panel(f"Scanning {url}...", style="bold cyan"))
-        results = {}
+            # Load endpoints from configuration
+            common_endpoints = load_endpoints()
+            detected_endpoints = detect_endpoints(url, common_endpoints)
 
-        # Run selected tests with progress
-        with Progress(SpinnerColumn(), TextColumn("{task.description}"), console=console) as progress:
-            for test_num in selected_tests:
-                test_name, test_func = TESTS[test_num]
-                progress.add_task(description=f"Testing {test_name}...", total=None)
-                results[test_name] = run_test(test_func, url)
+            console.print(Panel(f"Scanning {url}...", style="bold cyan"))
+            results = {}
 
-        display_results(results)
+            # Run selected tests with progress
+            with Progress(SpinnerColumn(), TextColumn("{task.description}"), console=console) as progress:
+                for test_num in selected_tests:
+                    test_name, test_func = TESTS[test_num]
+                    progress.add_task(description=f"Testing {test_name}...", total=None)
+                    results[test_name] = run_test(test_func, url)
 
-        # Generate and save the report, including detected endpoints
-        report_content = generate_report(url, results, detected_endpoints)
-        report_filename = f"reports/{url.replace('http://', '').replace('https://', '').replace('/', '_')}_report.txt"
-        with open(report_filename, "w") as report_file:
-            report_file.write(report_content)
+            display_results(results)
 
-        console.print(f"\n[bold green]Report saved to 'reports' folder.\n")
-        
-        # Cache the results
-        save_cache(url, results)
+            # Generate and save the report, including detected endpoints
+            report_content = generate_report(url, results, detected_endpoints)
+            report_filename = f"reports/{url.replace('http://', '').replace('https://', '').replace('/', '_')}_report.txt"
+            with open(report_filename, "w") as report_file:
+                report_file.write(report_content)
 
-        # Ask if user wants another scan
-        another_scan = Prompt.ask("[bold blue]Run another scan? (y/n)")
-        if another_scan.lower() != 'y':
+            console.print(f"\n[bold green]Report saved to 'reports' folder.\n")
+            
+            # Cache the results
+            save_cache(url, results)
+
+        elif action == "2":
+            # List existing reports
+            reports = os.listdir("reports")
+            if not reports:
+                console.print("[bold red]No reports found.")
+            else:
+                console.print(Panel("Existing Reports", style="bold blue"))
+                for report in reports:
+                    console.print(f"- {report}")
+
+            # Optionally, allow user to view a specific report
+            view_report = Prompt.ask("[bold yellow]Do you want to view a specific report? (y/n)")
+            if view_report.lower() == 'y':
+                report_to_view = Prompt.ask("[bold blue]Enter the report name (with extension)")
+                report_path = os.path.join("reports", report_to_view)
+
+                if os.path.exists(report_path):
+                    with open(report_path, "r") as f:
+                        report_content = f.read()
+                    console.print(Panel(report_content, title=report_to_view, style="bold green"))
+                else:
+                    console.print("[bold red]Report not found.")
+
+        else:
+            console.print("[bold red]Invalid selection. Please try again.")
+
+        another_action = Prompt.ask("[bold blue]Perform another action? (y/n)")
+        if another_action.lower() != 'y':
             break
 
 if __name__ == "__main__":

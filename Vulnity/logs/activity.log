@@ -8,3 +8,13 @@ Endpoint https://www.w3schools.com//search returned status 404
 Endpoint https://www.w3schools.com//help returned status 404
 Endpoint https://www.w3schools.com//products returned status 404
 Endpoint https://www.w3schools.com//api/v1/resource returned status 404
+Endpoint https://profile.intra.42.fr//admin returned status 404
+Endpoint https://profile.intra.42.fr//api/v1/resource returned status 404
+Endpoint https://profile.intra.42.fr//dashboard returned status 404
+Endpoint https://profile.intra.42.fr//products returned status 404
+Endpoint https://profile.intra.42.fr//help returned status 404
+Endpoint https://profile.intra.42.fr//login returned status 404
+Endpoint https://profile.intra.42.fr//status returned status 404
+Endpoint https://profile.intra.42.fr//search returned status 404
+Endpoint https://profile.intra.42.fr//register returned status 404
+Endpoint https://profile.intra.42.fr//users returned status 200
