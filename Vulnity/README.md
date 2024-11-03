@@ -25,15 +25,14 @@ Vulnity is a powerful and flexible web vulnerability scanning tool designed to h
 
 - Python 3.7 or higher
 - Required libraries:
-  - python -m venv (env_name)
-  - source (env_name)/bin/activate (Linux) / .\(env_name)\Scripts\activate (Windows)
-  - pip install -r requirements.txt
+```bash
+  python -m venv (env_name)
+  source (env_name)/bin/activate (Linux) / .\(env_name)\Scripts\activate (Windows)
+  pip install -r requirements.txt
+```
 
 You can install the required libraries using pip:
 
-```bash
-pip install requests rich
-```
 Installation
 
 To get started with Vulnity, clone the repository to your local machine:
