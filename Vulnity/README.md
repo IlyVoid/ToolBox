@@ -38,7 +38,7 @@ cd ToolBox/Vulnity
 ```
 Usage
 
-To run Vulnity, navigate to the directory containing the main.py file and execute it:
+To run Vulnity, navigate to the directory containing the install.sh file and execute it:
 
 ```bash
     ./install.sh
