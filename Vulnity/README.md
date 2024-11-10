@@ -24,12 +24,6 @@ Vulnity is a powerful and flexible web vulnerability scanning tool designed to h
 ## Requirements
 
 - Python 3.7 or higher
-- Required libraries:
-```bash
-  python -m venv (env_name)
-  source (env_name)/bin/activate (Linux) / .\(env_name)\Scripts\activate (Windows)
-  pip install -r requirements.txt
-```
 
 You can install the required libraries using pip:
 
@@ -47,10 +41,14 @@ Usage
 To run Vulnity, navigate to the directory containing the main.py file and execute it:
 
 ```bash
-
-python main.py
+    ./install.sh
 ```
-You will be prompted to enter the target URL and select the tests you want to run. You can select multiple tests by entering their corresponding numbers, separated by commas.
+then run 
+```bash
+    vulnity
+```
+You will be prompted to choose between test running or viewing reports.
+
 Available Tests
 
     1. SQL Injection

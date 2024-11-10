@@ -82,13 +82,18 @@ def show_menu():
     display_startup_message()
 
     while True:
+        # Display header panel for the main menu
         console.print(Panel("Vulnity powered on...", style="bold green"))
-        
+
         # User selects whether to test or view reports
-        action = Prompt.ask("[bold blue]Choose an action:\n1. Run Tests\n2. View Reports\n\nSelect (1 or 2)")
+        action = Prompt.ask(
+            "\n[bold blue]Choose an action:\n[cyan]1.[/] Run Tests\n[cyan]2.[/] View Reports",
+            choices=["1", "2"],
+            default="1"
+        )
 
         if action == "1":
-            url = Prompt.ask("[bold blue]Enter the target URL")
+            url = Prompt.ask("\n[bold blue]Enter the target URL")
 
             # Validate URL
             if not validate_url(url):
@@ -105,9 +110,9 @@ def show_menu():
                     continue
 
             # Display the tests table
-            table = Table(title="Available Tests")
-            table.add_column("No.", style="cyan", justify="center")
-            table.add_column("Test Name", style="magenta")
+            table = Table(title="[bold cyan]Available Tests")
+            table.add_column("No.", style="bold cyan", justify="center")
+            table.add_column("Test Name", style="bold magenta")
 
             for num, (name, _) in TESTS.items():
                 table.add_row(num, name)
@@ -117,6 +122,11 @@ def show_menu():
             # Get selected tests by number
             selected_tests = Prompt.ask("[bold yellow]Select tests to run (comma-separated numbers)").split(',')
             selected_tests = [test.strip() for test in selected_tests if test.strip() in TESTS]
+
+            # Check if any valid tests were selected
+            if not selected_tests:
+                console.print("[bold red]No valid tests selected. Please try again.")
+                continue
 
             # Load endpoints from configuration
             common_endpoints = load_endpoints()
@@ -137,11 +147,13 @@ def show_menu():
             # Generate and save the report, including detected endpoints
             report_content = generate_report(url, results, detected_endpoints)
             report_filename = f"reports/{url.replace('http://', '').replace('https://', '').replace('/', '_')}_report.txt"
-            with open(report_filename, "w") as report_file:
-                report_file.write(report_content)
+            try:
+                with open(report_filename, "w") as report_file:
+                    report_file.write(report_content)
+                console.print(f"\n[bold green]Report saved to 'reports' folder as {report_filename}.\n")
+            except IOError:
+                console.print("[bold red]Failed to save the report. Please check file permissions.")
 
-            console.print(f"\n[bold green]Report saved to 'reports' folder.\n")
-            
             # Cache the results
             save_cache(url, results)
 
@@ -151,29 +163,40 @@ def show_menu():
             if not reports:
                 console.print("[bold red]No reports found.")
             else:
-                console.print(Panel("Existing Reports", style="bold blue"))
+                console.print(Panel("[bold blue]Existing Reports[/bold blue]", style="bold blue"))
                 for report in reports:
-                    console.print(f"- {report}")
+                    console.print(f"[bold green]• {report}")
 
             # Optionally, allow user to view a specific report
-            view_report = Prompt.ask("[bold yellow]Do you want to view a specific report? (y/n)")
-            if view_report.lower() == 'y':
-                report_to_view = Prompt.ask("[bold blue]Enter the report name (with extension)")
-                report_path = os.path.join("reports", report_to_view)
+            # Option to view a specific report with strict input checking
+            while True:
+                view_report = Prompt.ask("\n[bold yellow]Do you want to view a specific report? (y/n)")
+                if view_report.lower() not in ('y', 'n'):
+                    console.print("[bold red]Invalid input. Please enter 'y' or 'n'.")
+                    continue  # Re-prompt until correct input is received
 
-                if os.path.exists(report_path):
-                    with open(report_path, "r") as f:
-                        report_content = f.read()
-                    console.print(Panel(report_content, title=report_to_view, style="bold green"))
-                else:
-                    console.print("[bold red]Report not found.")
+                if view_report.lower() == 'y':
+                    report_to_view = Prompt.ask("[bold blue]Enter the report name (with extension)")
+                    report_path = os.path.join("reports", report_to_view)
 
-        else:
-            console.print("[bold red]Invalid selection. Please try again.")
+                    if os.path.exists(report_path):
+                        try:
+                            with open(report_path, "r") as f:
+                                report_content = f.read()
+                            console.print(Panel(report_content, title=f"[bold cyan]{report_to_view}[/bold cyan]", style="bold green"))
+                        except IOError:
+                            console.print("[bold red]Failed to read the report. Please check file permissions.")
+                    else:
+                        console.print("[bold red]Report not found. Please check the name and try again.")
 
-        another_action = Prompt.ask("[bold blue]Perform another action? (y/n)")
-        if another_action.lower() != 'y':
-            break
+                # If 'n' is selected, exit the loop
+                break
 
+            # Continue to the next action prompt
+            another_action = Prompt.ask("\n[bold blue]Perform another action? (y/n)", choices=["y", "n"])
+            if another_action.lower() != 'y':
+                break
+
+# Main execution remains the same
 if __name__ == "__main__":
     show_menu()

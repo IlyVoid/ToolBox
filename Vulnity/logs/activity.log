@@ -18,3 +18,13 @@ Endpoint https://profile.intra.42.fr//status returned status 404
 Endpoint https://profile.intra.42.fr//search returned status 404
 Endpoint https://profile.intra.42.fr//register returned status 404
 Endpoint https://profile.intra.42.fr//users returned status 200
+Endpoint https://void-dev.xyz//products returned status 404
+Endpoint https://void-dev.xyz//help returned status 404
+Endpoint https://void-dev.xyz//login returned status 404
+Endpoint https://void-dev.xyz//search returned status 404
+Endpoint https://void-dev.xyz//admin returned status 404
+Endpoint https://void-dev.xyz//register returned status 404
+Endpoint https://void-dev.xyz//dashboard returned status 404
+Endpoint https://void-dev.xyz//users returned status 404
+Endpoint https://void-dev.xyz//api/v1/resource returned status 404
+Endpoint https://void-dev.xyz//status returned status 404
