@@ -30,6 +30,12 @@ from utils.config_utils import load_endpoints
 
 logger = setup_logging()
 
+# function to map Actions
+ACTIONS = {
+    "1": ("Run tests"),
+    "2": ("View reports"),
+}
+
 # Function to map test numbers to functions and names
 TESTS = {
     "1": ("SQL Injection", test_sql_injection),
@@ -81,16 +87,25 @@ def show_menu():
     clear_terminal()
     display_startup_message()
 
+    console.print(Panel("Vulnity powered on...", style="bold green"))
+
     while True:
-        # Display header panel for the main menu
-        console.print(Panel("Vulnity powered on...", style="bold green"))
+
+        # Create a table for the 1st options
+        table1 = Table(title="[bold blue]Actions")
+        table1.add_column("No.", style="bold blue", justify="center")
+        table1.add_column("Action", style="bold yellow")
+
+        for num, (name) in ACTIONS.items():
+            table1.add_row(num, name)
+
+        console.print(table1)
+
 
         # User selects whether to test or view reports
-        action = Prompt.ask(
-            "\n[bold blue]Choose an action:\n[cyan]1.[/] Run Tests\n[cyan]2.[/] View Reports",
-            choices=["1", "2"],
-            default="1"
-        )
+        action = Prompt.ask("\n[bold blue]Choose an action: ")
+
+        clear_terminal()
 
         if action == "1":
             url = Prompt.ask("\n[bold blue]Enter the target URL")
@@ -108,6 +123,8 @@ def show_menu():
                 use_cache = Prompt.ask("[bold blue]Use cached results? (y/n)").lower() == 'y'
                 if use_cache:
                     continue
+
+            clear_terminal()
 
             # Display the tests table
             table = Table(title="[bold cyan]Available Tests")
@@ -128,6 +145,7 @@ def show_menu():
                 console.print("[bold red]No valid tests selected. Please try again.")
                 continue
 
+            
             # Load endpoints from configuration
             common_endpoints = load_endpoints()
             detected_endpoints = detect_endpoints(url, common_endpoints)
@@ -142,6 +160,7 @@ def show_menu():
                     progress.add_task(description=f"Testing {test_name}...", total=None)
                     results[test_name] = run_test(test_func, url)
 
+            clear_terminal()
             display_results(results)
 
             # Generate and save the report, including detected endpoints
@@ -157,41 +176,60 @@ def show_menu():
             # Cache the results
             save_cache(url, results)
 
+            new_action = Prompt.ask("\n[bold blue]Do you wish to perform another action? (y/n)")
+            if new_action.lower() != 'y':
+                break
+
+            clear_terminal()
+            
         elif action == "2":
             # List existing reports
             reports = os.listdir("reports")
             if not reports:
                 console.print("[bold red]No reports found.")
             else:
-                console.print(Panel("[bold blue]Existing Reports[/bold blue]", style="bold blue"))
-                for report in reports:
-                    console.print(f"[bold green]• {report}")
+                # Display reports in a numbered table
+                table = Table(title="[bold blue]Available Reports", show_header=True, header_style="bold cyan")
+                table.add_column("No.", style="bold yellow", justify="center")
+                table.add_column("Report Name", style="bold green")
+        
+                for idx, report in enumerate(reports, start=1):
+                    table.add_row(str(idx), report)
+        
+                console.print(table)
 
-            # Optionally, allow user to view a specific report
-            # Option to view a specific report with strict input checking
-            while True:
-                view_report = Prompt.ask("\n[bold yellow]Do you want to view a specific report? (y/n)")
-                if view_report.lower() not in ('y', 'n'):
-                    console.print("[bold red]Invalid input. Please enter 'y' or 'n'.")
-                    continue  # Re-prompt until correct input is received
+                # Option to view a specific report by number
+                while True:
+                    view_report = Prompt.ask("\n[bold yellow]Do you want to view a specific report? (y/n)")
+                    if view_report.lower() not in ('y', 'n'):
+                        console.print("[bold red]Invalid input. Please enter 'y' or 'n'.")
+                        continue  # Re-prompt until correct input is received
 
-                if view_report.lower() == 'y':
-                    report_to_view = Prompt.ask("[bold blue]Enter the report name (with extension)")
-                    report_path = os.path.join("reports", report_to_view)
-
-                    if os.path.exists(report_path):
+                    if view_report.lower() == 'y':
                         try:
-                            with open(report_path, "r") as f:
-                                report_content = f.read()
-                            console.print(Panel(report_content, title=f"[bold cyan]{report_to_view}[/bold cyan]", style="bold green"))
-                        except IOError:
-                            console.print("[bold red]Failed to read the report. Please check file permissions.")
-                    else:
-                        console.print("[bold red]Report not found. Please check the name and try again.")
+                            report_number = int(Prompt.ask("[bold blue]Enter the report number"))
+                            if 1 <= report_number <= len(reports):
+                                report_to_view = reports[report_number - 1]
+                                report_path = os.path.join("reports", report_to_view)
 
-                # If 'n' is selected, exit the loop
-                break
+                                clear_terminal()
 
+                                if os.path.exists(report_path):
+                                    try:
+                                        with open(report_path, "r") as f:
+                                            report_content = f.read()
+                                        console.print(Panel(report_content, title=f"[bold cyan]{report_to_view}[/bold cyan]", style="bold green"))
+                                    except IOError:
+                                        console.print("[bold red]Failed to read the report. Please check file permissions.")
+                                else:
+                                    console.print("[bold red]Report not found. Please check the name and try again.")
+                            else:
+                                console.print("[bold red]Invalid number. Please choose a number from the table.")
+                        except ValueError:
+                            console.print("[bold red]Invalid input. Please enter a number.")
+                    # If 'n' is selected, exit the loop
+                    break
+ 
             # Continue to the next action prompt
             another_action = Prompt.ask("\n[bold blue]Perform another action? (y/n)", choices=["y", "n"])
             if another_action.lower() != 'y':

@@ -1,0 +1,35 @@
+Vulnerability Assessment Report for https://void-dev.xyz
+================================================================================
+Report Generated on: 2024-11-15 10:09:00
+================================================================================
+Detected Endpoints:
+--------------------------------------------------------------------------------
+  - https://void-dev.xyz/api/v1/resource - Status Code: 404
+  - https://void-dev.xyz/login - Status Code: 404
+  - https://void-dev.xyz/register - Status Code: 404
+  - https://void-dev.xyz/search - Status Code: 404
+  - https://void-dev.xyz/admin - Status Code: 404
+  - https://void-dev.xyz/dashboard - Status Code: 404
+  - https://void-dev.xyz/help - Status Code: 404
+  - https://void-dev.xyz/status - Status Code: 404
+  - https://void-dev.xyz/users - Status Code: 404
+  - https://void-dev.xyz/products - Status Code: 404
+--------------------------------------------------------------------------------
+
+Test: HTTP Header Injection
+--------------------------------------------------------------------------------
+  - Payload: test
+X-injected-header: Injected
+    Status: Vulnerable
+    Reason: HTTP header content reflected in response. Status code: 200.
+  - Payload: Content-Length: 0
+
+<script>alert('Injected')</script>
+    Status: Vulnerable
+    Reason: HTTP header content reflected in response. Status code: 403.
+  - Payload: X-Forwarded-For: 127.0.0.1
+X-Injected-Header: Attack
+    Status: Vulnerable
+    Reason: HTTP header content reflected in response. Status code: 200.
+================================================================================
+End of Report
