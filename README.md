@@ -12,7 +12,6 @@ Each tool has their own folder just navigate to it and read the readme.md connec
 | 🔒 EnCry                   | Shell scripts offering encryption and decryption functionalities.  |
 | 🎭 Mimic                   | Python script to mimic a device on a network by MAC address.       |
 | 🤐 ZipKill                 | Shell script that cracks zip passwords using wordlists.            |
-| 🧪 Vulnity                 | A pentesting tool including various tests. (W.I.P)                 |
 
 ## Usage
 
