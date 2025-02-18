@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# 🦫 File created by 𝖇𝖑4𝖘𝖘
+# GitHub: https://github.com/IlyVoid
+
 # Prompt the user for the ZIP file
 read -p "Enter the path to the ZIP file: " ZIPFILE
 

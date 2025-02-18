@@ -1,5 +1,8 @@
 #!/bin/zsh
 
+# 🦫 File created by 𝖇𝖑4𝖘𝖘
+# GitHub: https://github.com/IlyVoid
+
 # Define colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'

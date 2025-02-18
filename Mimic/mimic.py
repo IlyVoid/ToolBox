@@ -1,3 +1,6 @@
+# 🦫 File created by 𝖇𝖑4𝖘𝖘
+# GitHub: https://github.com/IlyVoid
+
 import subprocess
 import time
 import random
