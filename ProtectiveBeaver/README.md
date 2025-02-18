@@ -17,12 +17,15 @@ To run this script, you need to install the required dependencies.
 ### Install dependencies:
 ```bash
 pip install -r requirements.txt
-
+```
 Usage
 
     Run the script:
         If no encryption key exists, a new one will be generated and saved as secret.key.
         Choose between storing a new password, retrieving an existing password, or exiting the script.
+```bash
+python3 ProtectiveBeaver.py
+```
 
     Storing a password:
         Enter the name of the service (e.g., Gmail, GitHub).
@@ -33,8 +36,8 @@ Usage
         Enter the service name you want to retrieve the password for.
         The corresponding password will be decrypted and displayed.
 
-Example
-
+### Example:
+```bash
 🦫 Welcome to the Password Manager
 
 1. Store a new password
@@ -44,7 +47,7 @@ Choose an option: 1
 Enter the service (e.g., Gmail, GitHub): Gmail
 Enter the password to store: ********
 Password for Gmail has been securely stored.
-
+```
 Security Warning
 
     Make sure to store the secret.key securely. If the key is lost, the stored passwords cannot be decrypted.
